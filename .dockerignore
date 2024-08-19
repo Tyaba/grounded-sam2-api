@@ -1,0 +1,16 @@
+.devcontainer
+assets
+checkpoints/*.pt
+demo_images
+gdino_checkpoints/*.pth
+notebooks
+.gitattributes
+.mise.toml
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+LICENSE
+LICENSE_cctorch
+LICENSE_groundingdino
+LICENSE_sam2
+Makefile
+SAM2_README.md

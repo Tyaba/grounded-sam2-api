@@ -1,3 +1,6 @@
+# repo original
+data/*
+
 # SAM 2
 .vscode/
 .DS_Store
@@ -145,3 +148,6 @@ dmypy.json
 outputs/
 
 .idea/
+
+# exclude
+!data/.keep

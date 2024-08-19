@@ -1,3 +1,13 @@
+# API Server of Grounded SAM 2
+## setup
+```bash
+mise run download-models
+```
+
+The following is a quote from the README.md of the original repository.
+
+---
+
 # Grounded SAM 2
 Grounded SAM 2: Ground and Track Anything in Videos with [Grounding DINO](https://arxiv.org/abs/2303.05499), [Grounding DINO 1.5](https://arxiv.org/abs/2405.10300), [Florence-2](https://arxiv.org/abs/2311.06242) and [SAM 2](https://arxiv.org/abs/2408.00714).
 
@@ -198,7 +208,7 @@ In above demos, we only prompt Grounded SAM 2 in specific frame, which may not b
 Users can upload their own video files and specify custom text prompts for grounding and tracking using the Grounding DINO and SAM 2 frameworks. To do this, execute the script:
 
 
-```bash 
+```bash
 python grounded_sam2_tracking_demo_with_continuous_id.py
 ```
 
@@ -304,13 +314,13 @@ If you find this project helpful for your research, please consider citing the f
 
 ```BibTex
 @misc{ravi2024sam2segmentimages,
-      title={SAM 2: Segment Anything in Images and Videos}, 
+      title={SAM 2: Segment Anything in Images and Videos},
       author={Nikhila Ravi and Valentin Gabeur and Yuan-Ting Hu and Ronghang Hu and Chaitanya Ryali and Tengyu Ma and Haitham Khedr and Roman Rädle and Chloe Rolland and Laura Gustafson and Eric Mintun and Junting Pan and Kalyan Vasudev Alwala and Nicolas Carion and Chao-Yuan Wu and Ross Girshick and Piotr Dollár and Christoph Feichtenhofer},
       year={2024},
       eprint={2408.00714},
       archivePrefix={arXiv},
       primaryClass={cs.CV},
-      url={https://arxiv.org/abs/2408.00714}, 
+      url={https://arxiv.org/abs/2408.00714},
 }
 
 @article{liu2023grounding,
@@ -321,7 +331,7 @@ If you find this project helpful for your research, please consider citing the f
 }
 
 @misc{ren2024grounding,
-      title={Grounding DINO 1.5: Advance the "Edge" of Open-Set Object Detection}, 
+      title={Grounding DINO 1.5: Advance the "Edge" of Open-Set Object Detection},
       author={Tianhe Ren and Qing Jiang and Shilong Liu and Zhaoyang Zeng and Wenlong Liu and Han Gao and Hongjie Huang and Zhengyu Ma and Xiaoke Jiang and Yihao Chen and Yuda Xiong and Hao Zhang and Feng Li and Peijun Tang and Kent Yu and Lei Zhang},
       year={2024},
       eprint={2405.10300},
@@ -330,7 +340,7 @@ If you find this project helpful for your research, please consider citing the f
 }
 
 @misc{ren2024grounded,
-      title={Grounded SAM: Assembling Open-World Models for Diverse Visual Tasks}, 
+      title={Grounded SAM: Assembling Open-World Models for Diverse Visual Tasks},
       author={Tianhe Ren and Shilong Liu and Ailing Zeng and Jing Lin and Kunchang Li and He Cao and Jiayu Chen and Xinyu Huang and Yukang Chen and Feng Yan and Zhaoyang Zeng and Hao Zhang and Feng Li and Jie Yang and Hongyang Li and Qing Jiang and Lei Zhang},
       year={2024},
       eprint={2401.14159},
@@ -339,14 +349,14 @@ If you find this project helpful for your research, please consider citing the f
 }
 
 @article{kirillov2023segany,
-  title={Segment Anything}, 
+  title={Segment Anything},
   author={Kirillov, Alexander and Mintun, Eric and Ravi, Nikhila and Mao, Hanzi and Rolland, Chloe and Gustafson, Laura and Xiao, Tete and Whitehead, Spencer and Berg, Alexander C. and Lo, Wan-Yen and Doll{\'a}r, Piotr and Girshick, Ross},
   journal={arXiv:2304.02643},
   year={2023}
 }
 
 @misc{jiang2024trex2,
-      title={T-Rex2: Towards Generic Object Detection via Text-Visual Prompt Synergy}, 
+      title={T-Rex2: Towards Generic Object Detection via Text-Visual Prompt Synergy},
       author={Qing Jiang and Feng Li and Zhaoyang Zeng and Tianhe Ren and Shilong Liu and Lei Zhang},
       year={2024},
       eprint={2403.14610},

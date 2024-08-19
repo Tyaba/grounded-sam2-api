@@ -1,0 +1,44 @@
+// For format details, see https://aka.ms/devcontainer.json.
+// 使用可能なデフォルト環境変数: https://containers.dev/implementors/json_reference/#variables-in-devcontainerjson
+// For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-dockerfile
+{
+    // ---- docker begins ----
+    "name": "groundedsam2",
+    "build": {
+        "context": "..",
+        "dockerfile": "../Dockerfile",
+        "args": {
+            "USE_CUDA": "1",
+            "TORCH_ARCH": "7.0;7.5;8.0;8.6+PTX"
+        }
+    },
+    "runArgs": [
+        "--gpus",
+        "all"
+    ],
+    "workspaceFolder": "/home/appuser/Grounded-SAM-2",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/home/appuser/Grounded-SAM-2,type=bind,consistency=cached",
+    // dockerのmount 絶対PATHしか使えない
+    // targetを/home/${localEnv:USER}でなく/${containerEnv:HOME}にするとマウントに失敗する
+    "mounts": [
+        "source=${localEnv:HOME}/.config/gcloud/,target=/home/appuser/.config/gcloud/,type=bind,consistency=cached"
+    ],
+    "userEnvProbe": "loginInteractiveShell",
+    // ---- docker ends ----
+    // ---- devcontainer begins ----
+    // Features to add to the dev container. More info: https://containers.dev/features.
+    "remoteUser": "appuser",
+    "postAttachCommand": "/bin/bash .devcontainer/postAttachCommand.sh",
+    "features": {
+        "ghcr.io/devcontainers/features/github-cli:1": {},
+        "ghcr.io/devcontainers/features/git:1": {},
+        "ghcr.io/devcontainers/features/common-utils:2": {
+            "upgradePackages": true,
+            "username": "appuser",
+            "userUid": "automatic",
+            "userGid": "automatic"
+        }
+    }
+    // ---- devcontainer ends ----
+}

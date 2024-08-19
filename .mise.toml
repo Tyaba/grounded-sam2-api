@@ -1,0 +1,32 @@
+[env]
+SHORT_SHA = "{{exec(command='git rev-parse --short HEAD')}}"
+[tasks.short-sha]
+run = "echo $SHORT_SHA"
+
+[tasks.download-sam2]
+run = """
+cd checkpoints
+bash download_ckpts.sh
+"""
+
+[tasks.download-grounding-dino]
+run = """
+cd gdino_checkpoints
+bash download_ckpts.sh
+"""
+
+[tasks.download-models]
+depends = ["download-sam2", "download-grounding-dino"]
+
+[tasks.lint]
+run = "poetry run ruff check . --fix"
+[tasks.format]
+run = "poetry run ruff format ."
+[tasks.vet]
+depends = ["lint", "format"]
+
+[tasks.test]
+run = "poetry run python -m pytest tests"
+
+[tasks.download-stubs]
+run = "poetry run mypy --install-types --non-interactive"
