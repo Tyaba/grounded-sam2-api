@@ -108,7 +108,7 @@ We try to support a series of cascaded auto-labelling pipelines with Florence-2 
 """
 
 """
-Auto-Labelling Pipeline: Caption/Detailed Caption/More Detailed Caption + Phrase Grounding + Segmentation
+Auto-Labelling Pipeline 1: Caption/Detailed Caption/More Detailed Caption + Phrase Grounding + Segmentation
 """
 
 
