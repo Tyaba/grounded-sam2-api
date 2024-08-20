@@ -371,7 +371,7 @@ python grounded_sam2_florence2_autolabel_pipeline.py \
 - You can specify `caption_type` to control the granularity of the caption, if you want a more detailed caption, you can try `--caption_type detailed_caption` or `--caption_type more_detailed_caption`.
 
 ### Grounded SAM 2 Florence-2 Image Auto-Labeling Demo
-`Florence-2` can be used as a auto image annotator by cascading its caption capability with its grounding capability. 
+`Florence-2` can be used as a auto image annotator by cascading its caption capability with its grounding capability.
 
 | Task | Task Prompt | Text Input |
 |:---:|:---:|:---:|
