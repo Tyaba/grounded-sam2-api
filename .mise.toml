@@ -30,7 +30,7 @@ run = """
 docker run \
 --gpus all \
 -v $PWD:/home/appuser/Grounded-SAM-2 \
--p 58080:8080 \
+-p 58080:58080 \
 grounded_sam2:latest
 """
 

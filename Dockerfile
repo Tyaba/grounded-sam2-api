@@ -1,6 +1,6 @@
 FROM pytorch/pytorch:2.3.1-cuda12.1-cudnn8-devel
 
-EXPOSE 8080
+EXPOSE 58080
 
 # Arguments to build Docker Image using CUDA
 ARG USE_CUDA=0

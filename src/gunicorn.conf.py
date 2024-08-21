@@ -4,7 +4,7 @@ import os
 from typing import Any
 
 wsgi_app: str = "src.app.server:api"
-bind: list[str] = [f"0.0.0.0:{int(os.getenv('PORT', '8080'))}"]
+bind: list[str] = [f"0.0.0.0:{int(os.getenv('PORT', '58080'))}"]
 workers: int = 1
 worker_class: str = "uvicorn.workers.UvicornWorker"
 timeout: int = 0
