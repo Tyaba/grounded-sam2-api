@@ -1,4 +1,7 @@
-"""python src/usecase/gsam.py --image-path data/raw_images/205.png --text a 'product.'"""
+"""python src/usecase/gsam.py \
+    --image-path notebooks/images/abema_water.png \
+    --text a 'product.'
+"""
 
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
