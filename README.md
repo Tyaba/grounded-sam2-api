@@ -26,6 +26,19 @@ sam_output, visualization = gsam.segment(image, text, visualize=True)
 sam_output.segments[0].show()  # show cropped image
 ```
 
+## Manage Repository
+pull original repository
+```bash
+mise run pull-upstream
+```
+
+## test
+```bash
+mise run test
+```
+
+
+
 The following is a quote from the README.md of the original repository.
 
 ---
@@ -337,7 +350,7 @@ python grounded_sam2_florence2_image_demo.py \
 
 
 ### Grounded SAM 2 Florence-2 Image Auto-Labeling Demo
-`Florence-2` can be used as a auto image annotator by cascading its caption capability with its grounding capability. 
+`Florence-2` can be used as a auto image annotator by cascading its caption capability with its grounding capability.
 
 | Task | Task Prompt | Text Input |
 |:---:|:---:|:---:|

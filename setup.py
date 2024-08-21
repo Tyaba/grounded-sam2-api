@@ -48,11 +48,13 @@ REQUIRED_PACKAGES = [
     "supervision>=0.22.0",
     "pycocotools",
     "pydantic_settings",
+    "uvicorn",
+    "gunicorn",
 ]
 
 EXTRA_PACKAGES = {
     "demo": ["matplotlib>=3.9.1", "jupyter>=1.0.0", "opencv-python>=4.7.0"],
-    "dev": ["black==24.2.0", "usort==1.0.2", "ufmt==2.0.0b2"],
+    "dev": ["black==24.2.0", "usort==1.0.2", "ufmt==2.0.0b2", "pytest"],
 }
 
 # By default, we also build the SAM 2 CUDA extension.

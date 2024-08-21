@@ -1,4 +1,5 @@
-from tkinter import Image
+import base64
+from io import BytesIO
 
 import cv2
 import numpy as np
@@ -14,3 +15,15 @@ def pil2cv(image: Image.Image) -> np.ndarray:
     elif new_image.shape[2] == 4:  # 透過
         new_image = cv2.cvtColor(new_image, cv2.COLOR_RGBA2BGRA)
     return new_image
+
+
+def base642pil(image_base64: str) -> Image.Image:
+    image_bytes = base64.b64decode(image_base64)
+    image = Image.open(BytesIO(image_bytes))
+    return image
+
+
+def pil2base64(image: Image.Image) -> str:
+    buffered = BytesIO()
+    image.save(buffered, format="PNG")
+    return base64.b64encode(buffered.getvalue()).decode("utf-8")

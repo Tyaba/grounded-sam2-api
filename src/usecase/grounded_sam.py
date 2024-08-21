@@ -12,32 +12,38 @@ from supervision.draw.color import ColorPalette
 
 from src.domain.model.gdino import GDINOInput, GDINOOutput
 from src.domain.model.sam2 import SAM2Input, SAM2Output
+from src.domain.service.gdino import GDINOInterface
+from src.domain.service.sam2 import SAM2Interface
 from src.infrastructure.service.gdino import GDINO
 from src.infrastructure.service.sam2 import SAM2
 from src.utils.image import pil2cv
+from src.utils.logger import get_logger
 from utils.supervision_utils import CUSTOM_COLOR_MAP
+
+logger = get_logger(__name__)
 
 
 class GroundedSAM:
-    def __init__(self, gdino: GDINO, sam2: SAM2) -> None:
+    def __init__(self, gdino: GDINOInterface, sam2: SAM2Interface) -> None:
         self.gdino = gdino
         self.sam2 = sam2
 
     def segment(
         self, image: Image.Image, text: str, visualize: bool = False
     ) -> tuple[SAM2Output, Image.Image | None]:
+        logger.info(f"start segmentation: '{text}' from image ({image.size})")
         gdino_input = GDINOInput(image=image, text=text)
         gdino_output: GDINOOutput = self.gdino.detect(gdino_input)
         sam2_input = SAM2Input(image=gdino_input.image, input_boxes=gdino_output.boxes)
-        sam2_output = self.sam2.predict(sam2_input)
+        sam2_output = self.sam2.segment(sam2_input)
         visualization = None
         if visualize:
-            visualization = self.visualize_segment(
+            visualization = self._visualize_segment(
                 image=image, sam2_output=sam2_output, gdino_output=gdino_output
             )
         return sam2_output, visualization
 
-    def visualize_segment(
+    def _visualize_segment(
         self, image: Image.Image, sam2_output: SAM2Output, gdino_output: GDINOOutput
     ) -> Image.Image:
         detections = sv.Detections(

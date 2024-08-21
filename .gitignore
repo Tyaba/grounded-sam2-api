@@ -151,3 +151,5 @@ outputs/
 
 # exclude
 !data/.keep
+!tests
+!tests/**/*test*

@@ -3,13 +3,14 @@ import torch
 from transformers import AutoModelForZeroShotObjectDetection, AutoProcessor
 
 from src.domain.model.gdino import GDINOInput, GDINOOutput
+from src.domain.service.gdino import GDINOInterface
 from src.settings import Settings
 from src.utils.cuda import setup_cuda
 
 settings = Settings()
 
 
-class GDINO:
+class GDINO(GDINOInterface):
     def __init__(
         self, model_id: str = settings.gdino_model_id, device: str = settings.device
     ) -> None:
