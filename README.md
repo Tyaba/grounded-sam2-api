@@ -4,6 +4,28 @@
 mise run download-models
 ```
 
+## How to use
+```python
+from pathlib import Path
+
+from PIL import Image
+
+from src.infrastructure.service.gdino import GDINO
+from src.infrastructure.service.sam2 import SAM2
+from src.usecase.grounded_sam import GroundedSAM
+
+gdino = GDINO()
+sam2 = SAM2()
+gsam = GroundedSAM(gdino, sam2)
+
+image_path = Path("notebooks/images/abema_water.png")
+image = Image.open(image_path)
+text = "product."
+
+sam_output, visualization = gsam.segment(image, text, visualize=True)
+sam_output.segments[0].show()  # show cropped image
+```
+
 The following is a quote from the README.md of the original repository.
 
 ---
