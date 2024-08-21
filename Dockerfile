@@ -1,5 +1,7 @@
 FROM pytorch/pytorch:2.3.1-cuda12.1-cudnn8-devel
 
+EXPOSE 8080
+
 # Arguments to build Docker Image using CUDA
 ARG USE_CUDA=0
 ARG TORCH_ARCH="7.0;7.5;8.0;8.6"
@@ -32,5 +34,7 @@ RUN python -m pip install --upgrade pip setuptools wheel numpy
 # Install segment_anything package in editable mode
 RUN python -m pip install -e .
 
-# Install grounding dino 
+# Install grounding dino
 RUN python -m pip install --no-build-isolation -e grounding_dino
+
+CMD ["gunicorn", "-c", "src/gunicorn.conf.py"]

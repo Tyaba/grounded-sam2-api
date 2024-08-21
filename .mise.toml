@@ -1,5 +1,7 @@
 [env]
 SHORT_SHA = "{{exec(command='git rev-parse --short HEAD')}}"
+PWD = "{{exec(command='pwd')}}"
+
 [tasks.short-sha]
 run = "echo $SHORT_SHA"
 
@@ -16,7 +18,23 @@ bash download_ckpts.sh
 [tasks.download-models]
 depends = ["download-sam2", "download-grounding-dino"]
 
+[tasks.build]
+run = """
+docker build --build-arg USE_CUDA="1" \
+	--build-arg TORCH_ARCH="7.0;7.5;8.0;8.6+PTX" \
+	-t grounded_sam2:latest .
+"""
+
 [tasks.run]
+run = """
+docker run \
+--gpus all \
+-v $PWD:/home/appuser/Grounded-SAM-2 \
+-p 58080:8080 \
+grounded_sam2:latest
+"""
+
+[tasks.run_local]
 run = "gunicorn -c src/gunicorn.conf.py"
 
 [tasks.pull-upstream]

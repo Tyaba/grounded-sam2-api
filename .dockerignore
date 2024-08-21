@@ -14,3 +14,5 @@ LICENSE_groundingdino
 LICENSE_sam2
 Makefile
 SAM2_README.md
+data
+!data/.keep
