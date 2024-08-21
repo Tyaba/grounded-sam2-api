@@ -23,30 +23,31 @@ with open("README.md", "r") as f:
 
 # Required dependencies
 REQUIRED_PACKAGES = [
-    "torch>=2.3.1", 
+    "torch>=2.3.1",
     "torchvision>=0.18.1",
-    "transformers",  
+    "transformers",
     "numpy>=1.24.4",
     "tqdm>=4.66.1",
     "hydra-core>=1.3.2",
     "iopath>=0.1.10",
-    "pillow>=9.4.0",  
-    "huggingface_hub",  
-    "diffusers[torch]==0.15.1",  
-    "onnxruntime==1.14.1",  
-    "onnx==1.13.1",  
-    "ipykernel==6.16.2",  
-    "scipy",  
-    "gradio",  
-    "openai",  
-    "matplotlib>=3.9.1",  
-    "opencv-python>=4.7.0",  
-    "dds_cloudapi_sdk",  
-    "addict",  
-    "yapf",  
-    "timm",  
-    "supervision>=0.22.0",  
-    "pycocotools",  
+    "pillow>=9.4.0",
+    "huggingface_hub",
+    "diffusers[torch]==0.15.1",
+    "onnxruntime==1.14.1",
+    "onnx==1.13.1",
+    "ipykernel==6.16.2",
+    "scipy",
+    "gradio",
+    "openai",
+    "matplotlib>=3.9.1",
+    "opencv-python>=4.7.0",
+    "dds_cloudapi_sdk",
+    "addict",
+    "yapf",
+    "timm",
+    "supervision>=0.22.0",
+    "pycocotools",
+    "pydantic_settings",
 ]
 
 EXTRA_PACKAGES = {
@@ -99,7 +100,6 @@ def get_extensions():
 
 
 class BuildExtensionIgnoreErrors(BuildExtension):
-
     def finalize_options(self):
         try:
             super().finalize_options()
