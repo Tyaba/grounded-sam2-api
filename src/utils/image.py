@@ -1,5 +1,6 @@
 import base64
 from io import BytesIO
+from pathlib import Path
 
 import cv2
 import numpy as np
@@ -27,3 +28,19 @@ def pil2base64(image: Image.Image) -> str:
     buffered = BytesIO()
     image.save(buffered, format="PNG")
     return base64.b64encode(buffered.getvalue()).decode("utf-8")
+
+
+def get_image_paths(image_dir: Path) -> list[Path]:
+    if not image_dir.exists():
+        print(f"{image_dir} does not exist. Please check the path and try again.")
+    image_suffixes = {".jpg", ".png", ".jpeg", ".gif"}
+    if image_dir.suffix in image_suffixes:
+        print(f"{image_dir} is a file, not a directory. Use the file as an image.")
+        return [image_dir]
+    image_paths = []
+    for image_suffix in image_suffixes:
+        # recursive search for images in child directories
+        image_paths += list(image_dir.glob(f"**/*{image_suffix}"))
+    image_paths = sorted(image_paths)
+    print(f"Loaded {len(image_paths)} images from {image_dir}")
+    return image_paths
