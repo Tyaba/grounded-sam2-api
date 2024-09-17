@@ -24,3 +24,4 @@ class GDINOOutput(BaseModel):
     class_names: list[str]
     confidences: list[float]
     visualize_labels: list[str]
+    success: bool

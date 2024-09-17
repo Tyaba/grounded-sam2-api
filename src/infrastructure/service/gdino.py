@@ -6,6 +6,9 @@ from src.domain.model.gdino import GDINOInput, GDINOOutput
 from src.domain.service.gdino import GDINOInterface
 from src.settings import Settings
 from src.utils.cuda import setup_cuda
+from src.utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 settings = Settings()
 
@@ -25,8 +28,20 @@ class GDINO(GDINOInterface):
         inputs = self.processor(
             images=gdino_input.image, text=gdino_input.text, return_tensors="pt"
         ).to(self.device)
-        with torch.no_grad():
-            gdino_outputs = self.grounding_model(**inputs)
+        try:
+            with torch.no_grad():
+                gdino_outputs = self.grounding_model(**inputs)
+        except RuntimeError as e:
+            logger.warning(f"grounding dinoがerrorをraiseしました: {e}")
+            logger.warning("画像全体のbbox responseを返します")
+            return GDINOOutput(
+                boxes=np.array([[0, 0, gdino_input.image.size[0], gdino_input.image.size[1]]]),
+                class_ids=np.array([0]),
+                class_names=[""],
+                confidences=[0.0],
+                visualize_labels=[""],
+                success=False,
+            )
         results = self.processor.post_process_grounded_object_detection(
             gdino_outputs,
             inputs.input_ids,
@@ -48,5 +63,6 @@ class GDINO(GDINOInterface):
             class_names=class_names,
             confidences=confidences,
             visualize_labels=visualize_labels,
+            success=True,
         )
         return gdino_output

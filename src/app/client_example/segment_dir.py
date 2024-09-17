@@ -17,6 +17,9 @@ from tqdm import tqdm
 
 from src.user_interface.grounded_sam import SegmentReuqest
 from src.utils.image import get_image_paths, pil2base64
+from src.utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 PORT = os.getenv("PORT", 58080)
 
@@ -35,19 +38,29 @@ def segment_image(image: Image.Image, prompt: str) -> Image.Image:
     mask = Image.fromarray(mask_ar[0])
 
     segmented_image = Image.composite(
-        image1=image,
+        image1=image.convert("RGBA"),
         image2=Image.new("RGBA", image.size),
         mask=mask,
     )
+
+    segmented_image = segmented_image.crop(segmented_image.getbbox())
     return segmented_image
 
 
-def segment_dir(src_dir: Path, tgt_dir: Path, prompt: str) -> None:
+def segment_dir(
+        src_dir: Path,
+        tgt_dir: Path,
+        prompt: str,
+        overwrite: bool = False,
+        ) -> None:
     tgt_dir.mkdir(parents=True, exist_ok=True)
     image_paths = get_image_paths(src_dir)
     for image_path in tqdm(image_paths):
         relative_path = image_path.relative_to(src_dir)
         save_path = tgt_dir / relative_path.with_suffix(".png")
+        if save_path.exists() and not overwrite:
+            logger.info(f"{save_path} exists. skip")
+            continue
         image = Image.open(image_path)
         segmented_image = segment_image(image=image, prompt=prompt)
         segmented_image.save(save_path)
@@ -58,6 +71,7 @@ def main(args: Namespace) -> None:
         src_dir=args.src_dir,
         tgt_dir=args.tgt_dir,
         prompt=args.prompt,
+        overwrite=args.overwrite,
     )
 
 
@@ -81,6 +95,11 @@ if __name__ == "__main__":
         help="prompt",
         required=False,
         default="product.",
+    )
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="既存のファイルを上書きする",
     )
     args = parser.parse_args()
     main(args=args)
