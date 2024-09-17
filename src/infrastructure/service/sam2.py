@@ -34,17 +34,19 @@ class SAM2(SAM2Interface):
         if masks.ndim == 4:
             masks = masks.squeeze(1)
         masks = np.uint8(masks) * 255
-        segments = []
-        mask_images = []
+        segments: list[Image.Image] = []
+        mask_images: list[Image.Image] = []
         for mask in masks:
             mask_image = Image.fromarray(mask)
             segment = Image.composite(
-                image1=sam2_input.image,
-                image2=Image.new("RGB", sam2_input.image.size, color=(0, 0, 0)),
+                image1=sam2_input.image.convert("RGBA"),
+                image2=Image.new("RGBA", sam2_input.image.size),
                 mask=mask_image,
             )
             mask_images.append(mask_image)
             segments.append(segment)
+        if sam2_input.crop_bbox:
+            segments = [segment.crop(segment.getbbox()) for segment in segments]
 
         sam2_output = SAM2Output(
             segments=segments,
