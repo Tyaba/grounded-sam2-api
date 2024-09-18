@@ -24,7 +24,7 @@ logger = get_logger(__name__)
 PORT = os.getenv("PORT", 58080)
 
 
-def segment_image(image: Image.Image, prompt: str) -> Image.Image:
+def segment_image(image: Image.Image, prompt: str) -> list[Image.Image]:
     segment_request = SegmentReuqest(
         image=pil2base64(image),
         text=prompt,
@@ -34,36 +34,40 @@ def segment_image(image: Image.Image, prompt: str) -> Image.Image:
         json=segment_request.model_dump(),
     )
 
-    mask_ar = np.uint8(np.array(segment_response.json()["masks"]))
-    mask = Image.fromarray(mask_ar[0])
-
-    segmented_image = Image.composite(
-        image1=image.convert("RGBA"),
-        image2=Image.new("RGBA", image.size),
-        mask=mask,
-    )
-
-    segmented_image = segmented_image.crop(segmented_image.getbbox())
-    return segmented_image
+    mask_arrays = np.uint8(np.array(segment_response.json()["masks"]))
+    segmented_images = []
+    for mask_array in mask_arrays:
+        mask = Image.fromarray(mask_array)
+        segmented_image = Image.composite(
+            image1=image.convert("RGBA"),
+            image2=Image.new("RGBA", image.size),
+            mask=mask,
+        )
+        segmented_image = segmented_image.crop(segmented_image.getbbox())
+    segmented_images.append(segmented_image)
+    return segmented_images
 
 
 def segment_dir(
-        src_dir: Path,
-        tgt_dir: Path,
-        prompt: str,
-        overwrite: bool = False,
-        ) -> None:
+    src_dir: Path,
+    tgt_dir: Path,
+    prompt: str,
+    overwrite: bool = False,
+) -> None:
     tgt_dir.mkdir(parents=True, exist_ok=True)
     image_paths = get_image_paths(src_dir)
     for image_path in tqdm(image_paths):
         relative_path = image_path.relative_to(src_dir)
-        save_path = tgt_dir / relative_path.with_suffix(".png")
-        if save_path.exists() and not overwrite:
-            logger.info(f"{save_path} exists. skip")
+        save_dir = tgt_dir / relative_path.stem
+        if save_dir.exists() and not overwrite:
+            logger.info(f"{save_dir} exists. skip")
             continue
+        save_dir.mkdir(parents=True, exist_ok=True)
         image = Image.open(image_path)
-        segmented_image = segment_image(image=image, prompt=prompt)
-        segmented_image.save(save_path)
+        segmented_images = segment_image(image=image, prompt=prompt)
+        for i, segmented_image in enumerate(segmented_images):
+            save_path = save_dir / f"{i}.png"
+            segmented_image.save(save_path)
 
 
 def main(args: Namespace) -> None:
