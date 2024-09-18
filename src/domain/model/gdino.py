@@ -8,11 +8,11 @@ class GDINOInput(BaseModel):
     image: Image.Image
     text: str
     box_threshold: float = Field(
-        default=0.2,
+        default=0.25,
         description="https://huggingface.co/docs/transformers/model_doc/grounding-dino#transformers.GroundingDinoProcessor.post_process_grounded_object_detection",
     )
     text_threshold: float = Field(
-        default=0.2,
+        default=0.25,
         description="https://huggingface.co/docs/transformers/model_doc/grounding-dino#transformers.GroundingDinoProcessor.post_process_grounded_object_detection",
     )
 

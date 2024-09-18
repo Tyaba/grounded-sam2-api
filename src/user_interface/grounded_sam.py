@@ -20,8 +20,8 @@ class SegmentUserInterface:
 
     def segment(self, request: SegmentReuqest) -> SegmentResponse:
         image = base642pil(image_base64=request.image)
-        use_case_output, _ = self.use_case.segment(
+        sam2_output, gdino_output, _ = self.use_case.segment(
             image=image,
             text=request.text,
         )
-        return SegmentResponse(masks=use_case_output.mask_arrays.tolist())
+        return SegmentResponse(masks=sam2_output.mask_arrays.tolist())

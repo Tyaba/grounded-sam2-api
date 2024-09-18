@@ -5,6 +5,7 @@
 
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
+from typing import Any
 
 import supervision as sv
 from PIL import Image
@@ -29,19 +30,28 @@ class GroundedSAM:
         self.sam2 = sam2
 
     def segment(
-        self, image: Image.Image, text: str, visualize: bool = False
-    ) -> tuple[SAM2Output, Image.Image | None]:
+        self,
+        image: Image.Image,
+        text: str,
+        visualize: bool = False,
+        gdino_kwargs: dict[str, Any] = {},
+        sam2_kwargs: dict[str, Any] = {},
+    ) -> tuple[SAM2Output, GDINOOutput, Image.Image | None]:
         logger.info(f"start segmentation: '{text}' from image ({image.size})")
-        gdino_input = GDINOInput(image=image, text=text)
+        gdino_input = GDINOInput(image=image, text=text, **gdino_kwargs)
         gdino_output: GDINOOutput = self.gdino.detect(gdino_input)
-        sam2_input = SAM2Input(image=gdino_input.image, input_boxes=gdino_output.boxes)
+        sam2_input = SAM2Input(
+            image=gdino_input.image,
+            input_boxes=gdino_output.boxes,
+            **sam2_kwargs,
+        )
         sam2_output = self.sam2.segment(sam2_input)
         visualization = None
         if visualize:
             visualization = self._visualize_segment(
                 image=image, sam2_output=sam2_output, gdino_output=gdino_output
             )
-        return sam2_output, visualization
+        return sam2_output, gdino_output, visualization
 
     def _visualize_segment(
         self, image: Image.Image, sam2_output: SAM2Output, gdino_output: GDINOOutput

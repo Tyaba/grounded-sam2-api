@@ -28,20 +28,23 @@ class GDINO(GDINOInterface):
         inputs = self.processor(
             images=gdino_input.image, text=gdino_input.text, return_tensors="pt"
         ).to(self.device)
+        blank_output = GDINOOutput(
+            boxes=np.array(
+                [[0, 0, gdino_input.image.size[0], gdino_input.image.size[1]]]
+            ),
+            class_ids=np.array([0]),
+            class_names=[""],
+            confidences=[0.0],
+            visualize_labels=[""],
+            success=False,
+        )
         try:
             with torch.no_grad():
                 gdino_outputs = self.grounding_model(**inputs)
         except RuntimeError as e:
             logger.warning(f"grounding dinoがerrorをraiseしました: {e}")
             logger.warning("画像全体のbbox responseを返します")
-            return GDINOOutput(
-                boxes=np.array([[0, 0, gdino_input.image.size[0], gdino_input.image.size[1]]]),
-                class_ids=np.array([0]),
-                class_names=[""],
-                confidences=[0.0],
-                visualize_labels=[""],
-                success=False,
-            )
+            return blank_output
         results = self.processor.post_process_grounded_object_detection(
             gdino_outputs,
             inputs.input_ids,
@@ -50,6 +53,8 @@ class GDINO(GDINOInterface):
             target_sizes=[gdino_input.image.size[::-1]],
         )
         boxes = results[0]["boxes"].cpu().numpy()
+        if len(boxes) == 0:
+            return blank_output
         confidences = results[0]["scores"].cpu().numpy().tolist()
         class_names = results[0]["labels"]
         class_ids = np.array(list(range(len(class_names))))

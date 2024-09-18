@@ -22,7 +22,7 @@ image_path = Path("notebooks/images/abema_water.png")
 image = Image.open(image_path)
 text = "product."
 
-sam_output, visualization = gsam.segment(image, text, visualize=True)
+sam_output, gdino_output, visualization = gsam.segment(image, text, visualize=True)
 sam_output.segments[0].show()  # show cropped image
 ```
 
