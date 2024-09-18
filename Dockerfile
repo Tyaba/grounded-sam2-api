@@ -1,3 +1,4 @@
+#syntax=docker/dockerfile:1.4
 FROM pytorch/pytorch:2.3.1-cuda12.1-cudnn8-devel
 
 EXPOSE 58080
@@ -15,9 +16,14 @@ ENV PATH /usr/local/cuda-12.1/bin:${PATH}
 ENV LD_LIBRARY_PATH /usr/local/cuda-12.1/lib64:${LD_LIBRARY_PATH}
 
 # Install required packages and specific gcc/g++
-RUN apt-get update && apt-get install --no-install-recommends wget ffmpeg=7:* \
-    libsm6=2:* libxext6=2:* git=1:* nano vim=2:* ninja-build gcc-10 g++-10 -y \
-    && apt-get clean && apt-get autoremove && rm -rf /var/lib/apt/lists/*
+RUN <<EOF
+apt-get update
+apt-get install -y --no-install-recommends wget ffmpeg=7:* \
+libsm6=2:* libxext6=2:* git=1:* nano vim=2:* ninja-build gcc-10 g++-10
+apt-get clean
+apt-get autoremove
+rm -rf /var/lib/apt/lists/*
+EOF
 
 ENV CC=gcc-10
 ENV CXX=g++-10

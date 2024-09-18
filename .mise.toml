@@ -1,9 +1,13 @@
 [env]
 SHORT_SHA = "{{exec(command='git rev-parse --short HEAD')}}"
 PWD = "{{exec(command='pwd')}}"
+IMAGE_URI = "{{get_env(name='REGION')}}-docker.pkg.dev/{{get_env(name='GOOGLE_CLOUD_PROJECT')}}/containers/{{get_env(name='SERVICE_NAME')}}:{{env.SHORT_SHA}}"
 
 [tasks.short-sha]
 run = "echo $SHORT_SHA"
+
+[tasks.image-uri]
+run = "echo $IMAGE_URI"
 
 [tasks.download-sam2]
 run = """
@@ -18,11 +22,11 @@ bash download_ckpts.sh
 [tasks.download-models]
 depends = ["download-sam2", "download-grounding-dino"]
 
-[tasks.build]
+[tasks.build-local]
 run = """
 docker build --build-arg USE_CUDA="1" \
 	--build-arg TORCH_ARCH="7.0;7.5;8.0;8.6+PTX" \
-	-t grounded_sam2:latest .
+	-t ${IMAGE_URI} .
 """
 
 [tasks.run]
@@ -31,7 +35,7 @@ docker run \
 --gpus all \
 -v $PWD:/home/appuser/Grounded-SAM-2 \
 -p 58080:58080 \
-grounded_sam2:latest
+${IMAGE_URI}
 """
 
 [tasks.run_local]
@@ -57,3 +61,19 @@ run = "python -m pytest tests"
 
 [tasks.download-stubs]
 run = "mypy --install-types --non-interactive"
+
+[tasks.deploy-cloudrun]
+run = """
+gcloud run deploy ${SERVICE_NAME} \
+--image=${IMAGE_URI} \
+--no-allow-unauthenticated \
+--port=${PORT} \
+--concurrency=1 \
+--timeout=3600 \
+--cpu=8 \
+--memory=32Gi \
+--max-instances=7 \
+--no-cpu-throttling \
+--region=${REGION} \
+--project=${GOOGLE_CLOUD_PROJECT}
+"""

@@ -1,0 +1,69 @@
+steps:
+  - id: "download-sam2"
+    name: "ubuntu"
+    waitFor: ["-"]
+    script: |
+      #!/usr/bin/env bash
+      set -eu
+      cd checkpoints
+      bash download_ckpts.sh
+
+  - id: "download-gdino"
+    name: "ubuntu"
+    waitFor: ["-"]
+    script: |
+      #!/usr/bin/env bash
+      set -eu
+      cd gdino_checkpoints
+      bash download_ckpts.sh
+
+  - id: "docker-pull"
+    name: "gcr.io/cloud-builders/docker"
+    waitFor: ["-"]
+    env:
+      - "IMAGE_URI=$_IMAGE_URI"
+    script: |
+      #!/usr/bin/env bash
+      set -eu
+      docker pull $IMAGE_URI:latest || exit 0
+
+  - id: "docker-build"
+    name: "gcr.io/cloud-builders/docker"
+    waitFor: ["download-models", "docker-pull"]
+    env:
+      - "IMAGE_URI=$_IMAGE_URI"
+      - "SHORT_SHA=$SHORT_SHA"
+    script: |
+      #!/usr/bin/env bash
+      set -eu
+      docker buildx build \
+      --cache-from $IMAGE_URI:latest \
+      -t $IMAGE_URI:$SHORT_SHA \
+      -t $IMAGE_URI:latest \
+      -f Dockerfile .
+
+  - id: "test"
+    name: "$_IMAGE_URI"
+    waitFor: ["docker-build"]
+    dir: "/home/appuser/Grounded-SAM-2"
+    script: |
+      #!/usr/bin/env bash
+      uv run pytest -s tests
+
+  - id: "docker-push"
+    name: "gcr.io/cloud-builders/docker"
+    waitFor: ["test"]
+    env:
+      - "IMAGE_URI=$_IMAGE_URI"
+      - "SHORT_SHA=$SHORT_SHA"
+    script: |
+      #!/usr/bin/env bash
+      set -eu
+      docker push $IMAGE_URI:$SHORT_SHA
+      docker push $IMAGE_URI:latest
+
+options:
+  machineType: "E2_HIGHCPU_32"
+logsBucket: ${PROJECT_ID}_cloudbuild
+timeout: 3600s
+serviceAccount: projects/$PROJECT_ID/serviceAccounts/$_SERVICE_ACCOUNT

@@ -15,7 +15,7 @@ import requests
 from PIL import Image
 from tqdm import tqdm
 
-from src.user_interface.grounded_sam import SegmentReuqest
+from src.user_interface.grounded_sam import SegmentReuqest, SegmentResponse
 from src.utils.image import get_image_paths, pil2base64
 from src.utils.logger import get_logger
 
@@ -29,12 +29,12 @@ def segment_image(image: Image.Image, prompt: str) -> list[Image.Image]:
         image=pil2base64(image),
         text=prompt,
     )
-    segment_response = requests.post(
+    response = requests.post(
         url=f"http://localhost:{PORT}/segment",
         json=segment_request.model_dump(),
     )
-
-    mask_arrays = np.uint8(np.array(segment_response.json()["masks"]))
+    segment_response = SegmentResponse.model_validate(response.json())
+    mask_arrays = np.uint8(np.array(segment_response.masks))
     segmented_images = []
     for mask_array in mask_arrays:
         mask = Image.fromarray(mask_array)
