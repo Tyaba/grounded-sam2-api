@@ -21,7 +21,7 @@ steps:
     name: "gcr.io/cloud-builders/docker"
     waitFor: ["-"]
     env:
-      - "IMAGE_URI=$_IMAGE_URI"
+      - "IMAGE_URI=$_REGION-docker.pkg.dev/$PROJECT_ID/containers/$_SERVICE_NAME:$SHORT_SHA"
     script: |
       #!/usr/bin/env bash
       set -eu
@@ -31,7 +31,7 @@ steps:
     name: "gcr.io/cloud-builders/docker"
     waitFor: ["download-models", "docker-pull"]
     env:
-      - "IMAGE_URI=$_IMAGE_URI"
+      - "IMAGE_URI=$_REGION-docker.pkg.dev/$PROJECT_ID/containers/$_SERVICE_NAME:$SHORT_SHA"
       - "SHORT_SHA=$SHORT_SHA"
     script: |
       #!/usr/bin/env bash
@@ -43,7 +43,7 @@ steps:
       -f Dockerfile .
 
   - id: "test"
-    name: "$_IMAGE_URI"
+    name: "$_REGION-docker.pkg.dev/$PROJECT_ID/containers/$_SERVICE_NAME:$SHORT_SHA"
     waitFor: ["docker-build"]
     dir: "/home/appuser/Grounded-SAM-2"
     script: |
@@ -55,7 +55,7 @@ steps:
     name: "gcr.io/cloud-builders/docker"
     waitFor: ["test"]
     env:
-      - "IMAGE_URI=$_IMAGE_URI"
+      - "IMAGE_URI=$_REGION-docker.pkg.dev/$PROJECT_ID/containers/$_SERVICE_NAME:$SHORT_SHA"
       - "SHORT_SHA=$SHORT_SHA"
     script: |
       #!/usr/bin/env bash

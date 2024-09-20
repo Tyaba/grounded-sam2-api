@@ -1,7 +1,6 @@
 [env]
 SHORT_SHA = "{{exec(command='git rev-parse --short HEAD')}}"
 PWD = "{{exec(command='pwd')}}"
-IMAGE_URI = "{{get_env(name='REGION')}}-docker.pkg.dev/{{get_env(name='GOOGLE_CLOUD_PROJECT')}}/containers/{{get_env(name='SERVICE_NAME')}}:{{env.SHORT_SHA}}"
 
 [tasks.short-sha]
 run = "echo $SHORT_SHA"
@@ -61,6 +60,17 @@ run = "python -m pytest tests"
 
 [tasks.download-stubs]
 run = "mypy --install-types --non-interactive"
+
+[tasks.cloudbuild]
+run = """
+gcloud builds submit \
+--project $GOOGLE_CLOUD_PROJECT \
+--config cloudbuild.yaml \
+--substitutions=\
+_REGION=$REGION,\
+_SERVICE_NAME=$SERVICE_NAME,\
+SHORT_SHA=$SHORT_SHA
+"""
 
 [tasks.deploy-cloudrun]
 run = """
