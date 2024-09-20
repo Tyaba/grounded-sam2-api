@@ -29,7 +29,7 @@ steps:
 
   - id: "docker-build"
     name: "gcr.io/cloud-builders/docker"
-    waitFor: ["download-models", "docker-pull"]
+    waitFor: ["download-sam2", "download-gdino", "docker-pull"]
     env:
       - "IMAGE_URI=$_REGION-docker.pkg.dev/$PROJECT_ID/containers/$_SERVICE_NAME:$SHORT_SHA"
       - "SHORT_SHA=$SHORT_SHA"
