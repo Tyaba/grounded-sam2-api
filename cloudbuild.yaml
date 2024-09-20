@@ -5,6 +5,7 @@ steps:
     script: |
       #!/usr/bin/env bash
       set -eu
+      apt-get update && apt-get install -y wget
       cd checkpoints
       bash download_ckpts.sh
 
@@ -14,6 +15,7 @@ steps:
     script: |
       #!/usr/bin/env bash
       set -eu
+      apt-get update && apt-get install -y wget
       cd gdino_checkpoints
       bash download_ckpts.sh
 
