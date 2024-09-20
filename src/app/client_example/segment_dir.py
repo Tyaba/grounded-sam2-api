@@ -44,7 +44,7 @@ def segment_image(image: Image.Image, prompt: str) -> list[Image.Image]:
             mask=mask,
         )
         segmented_image = segmented_image.crop(segmented_image.getbbox())
-    segmented_images.append(segmented_image)
+        segmented_images.append(segmented_image)
     return segmented_images
 
 
