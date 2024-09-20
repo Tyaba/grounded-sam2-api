@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from src.usecase.grounded_sam import GroundedSAM
 from src.utils.image import base642pil
@@ -11,7 +11,11 @@ class SegmentReuqest(BaseModel):
 
 
 class SegmentResponse(BaseModel):
-    masks: list[list[list[int]]]
+    masks: list[list[list[int]]] = Field(
+        default=...,
+        title="segment mask",
+        description="mask = masks[idx_segment][x][y]のmask",
+    )
 
 
 class SegmentUserInterface:
