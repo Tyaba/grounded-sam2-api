@@ -48,7 +48,8 @@ steps:
     dir: "/home/appuser/Grounded-SAM-2"
     script: |
       #!/usr/bin/env bash
-      uv run pytest -s tests
+      pip install -e ".[dev]"
+      pytest -s tests
 
   - id: "docker-push"
     name: "gcr.io/cloud-builders/docker"

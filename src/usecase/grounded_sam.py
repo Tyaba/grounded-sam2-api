@@ -37,7 +37,7 @@ class GroundedSAM:
         gdino_kwargs: dict[str, Any] = {},
         sam2_kwargs: dict[str, Any] = {},
     ) -> tuple[SAM2Output, GDINOOutput, Image.Image | None]:
-        logger.info(f"start segmentation: '{text}' from image ({image.size})")
+        logger.info(f"画像(サイズ{image.size})から{text}のsegmentationをします")
         gdino_input = GDINOInput(image=image, text=text, **gdino_kwargs)
         gdino_output: GDINOOutput = self.gdino.detect(gdino_input)
         sam2_input = SAM2Input(
