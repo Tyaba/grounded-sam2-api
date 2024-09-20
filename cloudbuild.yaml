@@ -56,7 +56,7 @@ steps:
 
   - id: "docker-push"
     name: "gcr.io/cloud-builders/docker"
-    waitFor: ["test"]
+    waitFor: ["docker-build"]
     env:
       - "IMAGE_URI=$_REGION-docker.pkg.dev/$PROJECT_ID/containers/$_SERVICE_NAME"
       - "SHORT_SHA=$SHORT_SHA"
