@@ -1,12 +1,12 @@
 """example script to segment images in a directory
 Usage:
     python -m src.app.client_example.segment_dir \
+        --api-url http://localhost:58080 \
         --src-dir path/to/src_dir \
         --tgt-dir path/to/tgt_dir \
         --prompt "product."
 """
 
-import os
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
 
@@ -21,8 +21,6 @@ from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
-PORT = os.getenv("PORT", 58080)
-
 
 def segment_image(image: Image.Image, prompt: str) -> list[Image.Image]:
     segment_request = SegmentReuqest(
@@ -30,7 +28,7 @@ def segment_image(image: Image.Image, prompt: str) -> list[Image.Image]:
         text=prompt,
     )
     response = requests.post(
-        url=f"http://localhost:{PORT}/segment",
+        url=f"{args.api_url.remove_suffix('/')}/segment",
         json=segment_request.model_dump(),
     )
     segment_response = SegmentResponse.model_validate(response.json())
