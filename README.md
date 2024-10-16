@@ -1,10 +1,14 @@
 # API Server of Grounded SAM 2
+## environment setup
+we support .devcontainer
+
 ## setup
 ```bash
 mise run download-models
 ```
 
 ## How to use
+### Use locally
 ```python
 from pathlib import Path
 
@@ -24,6 +28,20 @@ text = "product."
 
 sam_output, gdino_output, visualization = gsam.segment(image, text, visualize=True)
 sam_output.segments[0].show()  # show cropped image
+```
+
+### Run API Server
+```bash
+gunicorn -c src/gunicorn.conf.py
+```
+
+### request to API Server
+```bash
+python -m src.app.client_example.segment_dir \
+        --api-url http://localhost:${PORT} \
+        --src-dir path/to/src_dir \
+        --tgt-dir path/to/tgt_dir \
+        --prompt "product."
 ```
 
 ## Manage Repository
