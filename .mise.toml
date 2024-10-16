@@ -75,15 +75,16 @@ SHORT_SHA=$SHORT_SHA
 [tasks.deploy-cloudrun]
 run = """
 gcloud run deploy ${SERVICE_NAME} \
---image=${IMAGE_URI} \
+--image=$REGION-docker.pkg.dev/$GOOGLE_CLOUD_PROJECT/containers/$SERVICE_NAME:${SHORT_SHA} \
 --no-allow-unauthenticated \
 --port=${PORT} \
 --concurrency=1 \
 --timeout=3600 \
 --cpu=8 \
 --memory=32Gi \
+--gpu=1 \
 --max-instances=7 \
 --no-cpu-throttling \
---region=${REGION} \
+--region=${CLOUD_RUN_REGION} \
 --project=${GOOGLE_CLOUD_PROJECT}
 """

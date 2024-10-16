@@ -66,6 +66,33 @@ steps:
       docker push $IMAGE_URI:$SHORT_SHA
       docker push $IMAGE_URI:latest
 
+  - id: "deploy-api"
+    name: "gcr.io/cloud-builders/gcloud"
+    waitFor: ["docker-push"]
+    dir: "/home/appuser/Grounded-SAM-2"
+    env:
+      - "SERVICE_NAME=$_SERVICE_NAME"
+      - "IMAGE_URI=$_REGION-docker.pkg.dev/$PROJECT_ID/containers/$_SERVICE_NAME"
+      - "SHORT_SHA=$SHORT_SHA"
+      - "PORT=$_PORT"
+      - "PROJECT_ID=$PROJECT_ID"
+    script: |
+      #!/usr/bin/env bash
+      set -eu
+      gcloud run deploy $SERVICE_NAME \
+        --image=$IMAGE_URI:$SHORT_SHA \
+        --no-allow-unauthenticated \
+        --port=$PORT \
+        --concurrency=1 \
+        --timeout=3600 \
+        --cpu=8 \
+        --memory=32Gi \
+        --gpu=1 \
+        --max-instances=7 \
+        --no-cpu-throttling \
+        --region=us-central1 \
+        --project=$PROJECT_ID
+
 options:
   machineType: "E2_HIGHCPU_32"
 logsBucket: ${PROJECT_ID}_cloudbuild
