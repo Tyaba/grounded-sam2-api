@@ -79,7 +79,7 @@ steps:
     script: |
       #!/usr/bin/env bash
       set -eu
-      gcloud run deploy $SERVICE_NAME \
+      gcloud beta run deploy $SERVICE_NAME \
         --image=$IMAGE_URI:$SHORT_SHA \
         --no-allow-unauthenticated \
         --port=$PORT \

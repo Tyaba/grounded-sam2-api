@@ -74,7 +74,7 @@ SHORT_SHA=$SHORT_SHA
 
 [tasks.deploy-cloudrun]
 run = """
-gcloud run deploy ${SERVICE_NAME} \
+gcloud beta run deploy ${SERVICE_NAME} \
 --image=$REGION-docker.pkg.dev/$GOOGLE_CLOUD_PROJECT/containers/$SERVICE_NAME:${SHORT_SHA} \
 --no-allow-unauthenticated \
 --port=${PORT} \
