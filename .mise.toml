@@ -25,7 +25,7 @@ depends = ["download-sam2", "download-grounding-dino"]
 run = """
 docker build --build-arg USE_CUDA="1" \
 	--build-arg TORCH_ARCH="7.0;7.5;8.0;8.6+PTX" \
-	-t ${IMAGE_URI} .
+	-t $REGION-docker.pkg.dev/$GOOGLE_CLOUD_PROJECT/containers/$SERVICE_NAME .
 """
 
 [tasks.run]
@@ -34,7 +34,7 @@ docker run \
 --gpus all \
 -v $PWD:/home/appuser/Grounded-SAM-2 \
 -p 58080:58080 \
-${IMAGE_URI}
+$REGION-docker.pkg.dev/$GOOGLE_CLOUD_PROJECT/containers/$SERVICE_NAME
 """
 
 [tasks.run_local]
