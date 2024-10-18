@@ -88,7 +88,7 @@ steps:
         --cpu=8 \
         --memory=32Gi \
         --gpu=1 \
-        --max-instances=7 \
+        --max-instances=4 \
         --no-cpu-throttling \
         --region=us-central1 \
         --project=$PROJECT_ID
