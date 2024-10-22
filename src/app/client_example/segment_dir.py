@@ -15,7 +15,7 @@ import requests
 from PIL import Image
 from tqdm import tqdm
 
-from src.user_interface.grounded_sam import SegmentReuqest, SegmentResponse
+from src.user_interface.grounded_sam import SegmentRequest, SegmentResponse
 from src.utils.image import get_image_paths, pil2base64
 from src.utils.logger import get_logger
 
@@ -23,7 +23,7 @@ logger = get_logger(__name__)
 
 
 def segment_image(image: Image.Image, prompt: str) -> list[Image.Image]:
-    segment_request = SegmentReuqest(
+    segment_request = SegmentRequest(
         image=pil2base64(image),
         text=prompt,
     )

@@ -32,7 +32,6 @@ docker build --build-arg USE_CUDA="1" \
 run = """
 docker run \
 --gpus all \
--v $PWD:/home/appuser/Grounded-SAM-2 \
 -p 58080:58080 \
 $REGION-docker.pkg.dev/$GOOGLE_CLOUD_PROJECT/containers/$SERVICE_NAME
 """

@@ -1,6 +1,7 @@
 import base64
 from io import BytesIO
 from pathlib import Path
+from typing import Literal
 
 import cv2
 import numpy as np
@@ -24,9 +25,11 @@ def base642pil(image_base64: str) -> Image.Image:
     return image
 
 
-def pil2base64(image: Image.Image) -> str:
+def pil2base64(
+    image: Image.Image, format: Literal["PNG", "JPEG", "WEBP"] = "PNG"
+) -> str:
     buffered = BytesIO()
-    image.save(buffered, format="PNG")
+    image.save(buffered, format=format)
     return base64.b64encode(buffered.getvalue()).decode("utf-8")
 
 

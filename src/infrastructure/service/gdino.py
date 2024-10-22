@@ -25,6 +25,7 @@ class GDINO(GDINOInterface):
         self.device = device
 
     def detect(self, gdino_input: GDINOInput):
+        gdino_input.image = gdino_input.image.convert("RGB")
         inputs = self.processor(
             images=gdino_input.image, text=gdino_input.text, return_tensors="pt"
         ).to(self.device)
