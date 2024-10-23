@@ -36,12 +36,63 @@ gunicorn -c src/gunicorn.conf.py
 ```
 
 ### request to API Server
-```bash
-python -m src.app.client_example.segment_dir \
-        --api-url http://localhost:${PORT} \
-        --src-dir path/to/src_dir \
-        --tgt-dir path/to/tgt_dir \
-        --prompt "product."
+```python
+import base64
+import os
+from io import BytesIO
+from pathlib import Path
+from typing import Literal
+
+import google.auth.transport.requests
+import google.oauth2.id_token
+import numpy as np
+import requests
+from PIL import Image
+
+
+def get_bearer_token(audience_url: str) -> str:
+    auth_req = google.auth.transport.requests.Request()
+    token = google.oauth2.id_token.fetch_id_token(
+        request=auth_req, audience=audience_url
+    )
+    assert isinstance(token, str)
+    return token
+
+
+def get_authorized_headers(audience_url: str) -> dict[str, str]:
+    return {"Authorization": f"Bearer {get_bearer_token(audience_url)}"}
+
+
+def pil2base64(image: Image.Image, fmt: Literal["PNG", "JPEG"] = "PNG") -> str:
+    image = image.convert("RGBA" if fmt == "PNG" else "RGB")
+    buffered = BytesIO()
+    image.save(buffered, format=fmt)
+    image_base64 = base64.b64encode(buffered.getvalue()).decode("ascii")
+    return image_base64
+
+
+url = os.environ["GROUNDED_SAM2_URL"]
+headers = get_authorized_headers(url)
+# post
+image_path = Path("tests/data/one_bottle.png")
+image = Image.open(image_path)
+image_base64 = pil2base64(image, fmt="JPEG")
+prompt = "product."
+
+data = {
+    "image": image_base64,
+    "text": prompt,
+}
+segment_url = f"{url}/segment"
+response = requests.post(segment_url, headers=headers, json=data, timeout=360)
+mask_ar = np.uint8(np.array(response.json()["masks"]))
+mask = Image.fromarray(mask_ar[0])
+segmented_image = Image.composite(
+    image1=image,
+    image2=Image.new("RGBA", image.size),
+    mask=mask,
+)
+segmented_image.show()
 ```
 
 ## Manage Repository
