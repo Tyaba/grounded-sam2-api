@@ -1,5 +1,6 @@
 # repo original
 data/*
+gdino_checkpoints/*
 
 # SAM 2
 .vscode/
@@ -12,7 +13,7 @@ build/*
 _C.*
 outputs/*
 checkpoints/*.pt
-*test*
+*test*¿
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -151,5 +152,7 @@ outputs/
 
 # exclude
 !data/.keep
+!checkpoints/download_ckpts.sh
+!gdino_checkpoints/download_ckpts.sh
 !tests
 !tests/**/*test*
