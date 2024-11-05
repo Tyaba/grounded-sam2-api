@@ -117,6 +117,8 @@ Grounded SAM 2: Ground and Track Anything in Videos with [Grounding DINO](https:
 
 **🔥 Project Highlight**
 
+ Grounded SAM 2 is a foundation model pipeline towards grounding and track anything in Videos with [Grounding DINO](https://arxiv.org/abs/2303.05499), [Grounding DINO 1.5](https://arxiv.org/abs/2405.10300), [Florence-2](https://arxiv.org/abs/2311.06242) and [SAM 2](https://arxiv.org/abs/2408.00714).
+
 In this repo, we've supported the following demo with **simple implementations**:
 - **Ground and Segment Anything** with Grounding DINO, Grounding DINO 1.5 & 1.6 and SAM 2
 - **Ground and Track Anything** with Grounding DINO, Grounding DINO 1.5 & 1.6 and SAM 2
@@ -124,10 +126,10 @@ In this repo, we've supported the following demo with **simple implementations**
 
 Grounded SAM 2 does not introduce significant methodological changes compared to [Grounded SAM: Assembling Open-World Models for Diverse Visual Tasks](https://arxiv.org/abs/2401.14159). Both approaches leverage the capabilities of open-world models to address complex visual tasks. Consequently, we try to **simplify the code implementation** in this repository, aiming to enhance user convenience.
 
-[![Video Name](./assets/grounded_sam_2_intro.jpg)](https://github.com/user-attachments/assets/f0fb0022-779a-49fb-8f46-3a18a8b4e893)
+## Latest updates
 
-## News
-
+- `2024/10/24`: Support [SAHI (Slicing Aided Hyper Inference)](https://docs.ultralytics.com/guides/sahi-tiled-inference/) on Grounded SAM 2 (with Grounding DINO 1.5) which may be helpful for inferencing high resolution image with dense small objects (e.g. **4K** images).
+- `2024/10/10`: Support `SAM-2.1` models, if you want to use `SAM 2.1` model, you need to update to the latest code and reinstall SAM 2 follow [SAM 2.1 Installation](https://github.com/facebookresearch/sam2?tab=readme-ov-file#latest-updates).
 - `2024/08/31`: Support `dump json results` in Grounded SAM 2 Image Demos (with Grounding DINO).
 - `2024/08/20`: Support **Florence-2 SAM 2 Image Demo** which includes `dense region caption`, `object detection`, `phrase grounding`, and cascaded auto-label pipeline `caption + phrase grounding`.
 - `2024/08/09`: Support **Ground and Track New Object** throughout the whole videos. This feature is still under development now. Credits to [Shuo Shen](https://github.com/ShuoShenDe).
@@ -138,13 +140,15 @@ Grounded SAM 2 does not introduce significant methodological changes compared to
 - [Grounded SAM 2 Demos](#grounded-sam-2-demos)
   - [Grounded SAM 2 Image Demo](#grounded-sam-2-image-demo-with-grounding-dino)
   - [Grounded SAM 2 Image Demo (with Grounding DINO 1.5 & 1.6)](#grounded-sam-2-image-demo-with-grounding-dino-15--16)
+  - [Grounded SAM 2 with SAHI for High Resolution Image Inference](#sahi-slicing-aided-hyper-inference-with-grounding-dino-15-and-sam-2)
+  - [Automatically Saving Grounding and Segmentation Results](#automatically-saving-grounding-results-image-demo)
   - [Grounded SAM 2 Video Object Tracking Demo](#grounded-sam-2-video-object-tracking-demo)
   - [Grounded SAM 2 Video Object Tracking Demo (with Grounding DINO 1.5 & 1.6)](#grounded-sam-2-video-object-tracking-demo-with-grounding-dino-15--16)
   - [Grounded SAM 2 Video Object Tracking with Custom Video Input (using Grounding DINO)](#grounded-sam-2-video-object-tracking-demo-with-custom-video-input-with-grounding-dino)
   - [Grounded SAM 2 Video Object Tracking with Custom Video Input (using Grounding DINO 1.5 & 1.6)](#grounded-sam-2-video-object-tracking-demo-with-custom-video-input-with-grounding-dino-15--16)
   - [Grounded SAM 2 Video Object Tracking with Continues ID (using Grounding DINO)](#grounded-sam-2-video-object-tracking-with-continuous-id-with-grounding-dino)
 - [Grounded SAM 2 Florence-2 Demos](#grounded-sam-2-florence-2-demos)
-  - [Grounded SAM 2 Florence-2 Image Demo](#grounded-sam-2-florence-2-image-demo-updating)
+  - [Grounded SAM 2 Florence-2 Image Demo](#grounded-sam-2-florence-2-image-demo)
   - [Grounded SAM 2 Florence-2 Image Auto-Labeling Demo](#grounded-sam-2-florence-2-image-auto-labeling-demo)
 - [Citation](#citation)
 
@@ -233,7 +237,7 @@ We've already released our most capable open-set detection model [Grounding DINO
 Install the latest DDS cloudapi:
 
 ```bash
-pip install dds-cloudapi-sdk
+pip install dds-cloudapi-sdk --upgrade
 ```
 
 Apply your API token from our official website here: [request API token](https://deepdataspace.com/request_api).
@@ -241,6 +245,55 @@ Apply your API token from our official website here: [request API token](https:/
 ```bash
 python grounded_sam2_gd1.5_demo.py
 ```
+
+### SAHI (Slicing Aided Hyper Inference) with Grounding DINO 1.5 and SAM 2
+
+If your images are high resolution with dense objects, directly using Grounding DINO 1.5 for inference on the original image may not be the best choice. We support [SAHI (Slicing Aided Hyper Inference)](https://docs.ultralytics.com/guides/sahi-tiled-inference/), which works by first dividing the original image into smaller overlapping patches. Inference is then performed separately on each patch, and the final detection results are merged. This method is highly effective and accuracy for dense and small objects detection in high resolution images.
+
+You can run SAHI inference by setting the following param in [grounded_sam2_gd1.5_demo.py](./grounded_sam2_gd1.5_demo.py):
+
+```python
+WITH_SLICE_INFERENCE = True
+```
+
+The visualization is shown as follows:
+
+| Text Prompt | Input Image | Grounded SAM 2 | Grounded SAM 2 with SAHI |
+|:----:|:----:|:----:|:----:|
+| `Person` | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam_2/demo_images/dense%20people.png?raw=true) | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam_2/grounding_dino_1.5_slice_inference/grounded_sam2_annotated_image_with_mask.jpg?raw=true) | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam_2/grounding_dino_1.5_slice_inference/grounded_sam2_annotated_image_with_mask_with_slice_inference.jpg?raw=true) |
+
+- **Notes:** We only support SAHI on Grounding DINO 1.5 because it works better with stronger grounding model which may produce less hallucination results.
+
+### Automatically Saving Grounding Results (Image Demo)
+
+After setting `DUMP_JSON_RESULTS=True` in the following Grounded SAM 2 Image Demos:
+- [grounded_sam2_local_demo.py](./grounded_sam2_local_demo.py)
+- [grounded_sam2_hf_model_demo.py](./grounded_sam2_hf_model_demo.py)
+- [grounded_sam2_gd1.5_demo.py](./grounded_sam2_gd1.5_demo.py)
+
+The `grounding` and `segmentation` results will be automatically saved in the `outputs` dir with the following format:
+
+```python
+{
+    "image_path": "path/to/image.jpg",
+    "annotations": [
+        {
+            "class_name": "class_name",
+            "bbox": [x1, y1, x2, y2],
+            "segmentation": {
+                "size": [h, w],
+                "counts": "rle_encoded_mask"
+            },
+            "score": confidence score
+        }
+    ],
+    "box_format": "xyxy",
+    "img_width": w,
+    "img_height": h
+}
+```
+
+
 
 ### Grounded SAM 2 Video Object Tracking Demo
 
@@ -280,6 +333,12 @@ Users can upload their own video file (e.g. `assets/hippopotamus.mp4`) and speci
 
 ```bash
 python grounded_sam2_tracking_demo_custom_video_input_gd1.0_hf_model.py
+```
+
+If you are not convenient to use huggingface demo, you can also run tracking demo with local grounding dino model with the following scripts:
+
+```bash
+python grounded_sam2_tracking_demo_custom_video_input_gd1.0_local_model.py
 ```
 
 ### Grounded SAM 2 Video Object Tracking Demo with Custom Video Input (with Grounding DINO 1.5 & 1.6)
@@ -416,29 +475,8 @@ python grounded_sam2_florence2_image_demo.py \
     --image_path ./notebooks/images/cars.jpg \
     --text_input "car <and> building"
 ```
-- Note that if you want to detect multi-objects you should split them with `<and>` in your input text.
+- Note that if you want to **detect multiple classes** you should split them with `<and>` in your input text.
 
-
-### Grounded SAM 2 Florence-2 Image Auto-Labeling Demo
-`Florence-2` can be used as a auto image annotator by cascading its caption capability with its grounding capability.
-
-| Task | Task Prompt | Text Input |
-|:---:|:---:|:---:|
-| Caption + Phrase Grounding | `<CAPTION>` + `<CAPTION_TO_PHRASE_GROUNDING>` | &#10008; |
-| Detailed Caption + Phrase Grounding | `<DETAILED_CAPTION>` + `<CAPTION_TO_PHRASE_GROUNDING>` | &#10008; |
-| More Detailed Caption + Phrase Grounding | `<MORE_DETAILED_CAPTION>` + `<CAPTION_TO_PHRASE_GROUNDING>` | &#10008; |
-
-You can try the following scripts to run these demo:
-
-**Caption to Phrase Grounding**
-```bash
-python grounded_sam2_florence2_autolabel_pipeline.py \
-    --image_path ./notebooks/images/groceries.jpg \
-    --pipeline caption_to_phrase_grounding \
-    --caption_type caption
-```
-
-- You can specify `caption_type` to control the granularity of the caption, if you want a more detailed caption, you can try `--caption_type detailed_caption` or `--caption_type more_detailed_caption`.
 
 ### Grounded SAM 2 Florence-2 Image Auto-Labeling Demo
 `Florence-2` can be used as a auto image annotator by cascading its caption capability with its grounding capability.
