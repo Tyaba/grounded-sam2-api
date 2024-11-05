@@ -7,6 +7,20 @@ from src.utils.logger import get_logger
 logger = get_logger(__name__)
 
 
+class DetectRequest(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+    image: str
+    text: str
+
+
+class DetectResponse(BaseModel):
+    boxes: list[list[list[int]]] = Field(
+        default=...,
+        title="detected boxes",
+        description="boxes = boxes[idx_box][x][y]",
+    )
+
+
 class SegmentRequest(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
     image: str
@@ -21,7 +35,7 @@ class SegmentResponse(BaseModel):
     )
 
 
-class SegmentUserInterface:
+class GSAM2UserInterface:
     def __init__(self, use_case: GroundedSAM) -> None:
         self.use_case = use_case
 
@@ -34,3 +48,10 @@ class SegmentUserInterface:
         )
         logger.info("segment done")
         return SegmentResponse(masks=sam2_output.mask_arrays.tolist())
+
+    def detect(self, request: DetectRequest) -> DetectResponse:
+        logger.info("detect request received")
+        image = base642pil(image_base64=request.image)
+        gdino_output = self.use_case.detect(image=image, text=request.text)
+        logger.info("detect done")
+        return DetectResponse(boxes=gdino_output.boxes.tolist())

@@ -29,6 +29,11 @@ class GroundedSAM:
         self.gdino = gdino
         self.sam2 = sam2
 
+    def detect(self, image: Image.Image, text: str, **kwargs: Any) -> GDINOOutput:
+        logger.info(f"画像(サイズ{image.size})から{text}のbboxを検出します")
+        gdino_input = GDINOInput(image=image, text=text, **kwargs)
+        return self.gdino.detect(gdino_input)
+
     def segment(
         self,
         image: Image.Image,
@@ -38,10 +43,9 @@ class GroundedSAM:
         sam2_kwargs: dict[str, Any] = {},
     ) -> tuple[SAM2Output, GDINOOutput, Image.Image | None]:
         logger.info(f"画像(サイズ{image.size})から{text}のsegmentationをします")
-        gdino_input = GDINOInput(image=image, text=text, **gdino_kwargs)
-        gdino_output: GDINOOutput = self.gdino.detect(gdino_input)
+        gdino_output = self.detect(image, text, **gdino_kwargs)
         sam2_input = SAM2Input(
-            image=gdino_input.image,
+            image=image,
             input_boxes=gdino_output.boxes,
             **sam2_kwargs,
         )
