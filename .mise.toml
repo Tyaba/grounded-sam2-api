@@ -41,7 +41,7 @@ run = "gunicorn -c src/gunicorn.conf.py"
 
 [tasks.pull-upstream]
 run = """
-git remote add upstream
+git remote add upstream https://github.com/IDEA-Research/Grounded-SAM-2.git
 git fetch upstream
 git checkout main
 git merge upstream/main
