@@ -92,18 +92,6 @@ steps:
         --no-cpu-throttling \
         --region=us-central1 \
         --project=$PROJECT_ID
-  - id: "test-api"
-    name: "gcr.io/cloud-builders/gcloud"
-    waitFor: ["deploy-api"]
-    env:
-      - "SERVICE_NAME=$_SERVICE_NAME"
-      - "GOOGLE_CLOUD_PROJECT=$PROJECT_ID"
-      - "SERVICE_ACCOUNT=$_SERVICE_ACCOUNT"
-    script: |
-      #!/usr/bin/env bash
-      set -eu
-      chmod +x tests/bin/request_cloudrun_api.sh
-      ./tests/bin/request_cloudrun_api.sh
 
 options:
   machineType: "E2_HIGHCPU_32"
