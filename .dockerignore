@@ -1,6 +1,7 @@
 .devcontainer
 assets
 checkpoints
+gdino_checkpoints
 demo_images
 notebooks
 .gitattributes
@@ -15,4 +16,5 @@ Makefile
 SAM2_README.md
 data
 !data/.keep
-!checkpoints/sam2_hiera_large.pt
+!checkpoints/sam2.1_hiera_large.pt
+!gdino_checkpoints/groundingdino_swint_ogc.pth
