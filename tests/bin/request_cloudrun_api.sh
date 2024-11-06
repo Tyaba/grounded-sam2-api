@@ -7,8 +7,8 @@ URL=$(gcloud run services describe $SERVICE_NAME \
   --project=$GOOGLE_CLOUD_PROJECT \
   --format='value(status.url)')
 
-# IDトークンを取得
-TOKEN=$(gcloud auth print-identity-token)
+# Cloud Build環境用のIDトークン取得
+TOKEN=$(gcloud auth print-identity-token --impersonate-service-account=$SERVICE_ACCOUNT)
 
 # detectエンドポイントのテスト
 detect_response=$(curl -s -o /dev/null -w "%{http_code}" \

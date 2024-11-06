@@ -98,6 +98,7 @@ steps:
     env:
       - "SERVICE_NAME=$_SERVICE_NAME"
       - "GOOGLE_CLOUD_PROJECT=$PROJECT_ID"
+      - "SERVICE_ACCOUNT=$_SERVICE_ACCOUNT"
     script: |
       #!/usr/bin/env bash
       set -eu
