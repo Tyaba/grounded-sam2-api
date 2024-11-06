@@ -14,10 +14,10 @@ class DetectRequest(BaseModel):
 
 
 class DetectResponse(BaseModel):
-    boxes: list[list[list[int]]] = Field(
+    boxes: list[tuple[int, int, int, int]] = Field(
         default=...,
         title="detected boxes",
-        description="boxes = boxes[idx_box][x][y]",
+        description="box = boxes[idx_box]",
     )
 
 
@@ -54,4 +54,5 @@ class GSAM2UserInterface:
         image = base642pil(image_base64=request.image)
         gdino_output = self.use_case.detect(image=image, text=request.text)
         logger.info("detect done")
-        return DetectResponse(boxes=gdino_output.boxes.tolist())
+        boxes = [tuple(int(x) for x in box) for box in gdino_output.boxes.tolist()]
+        return DetectResponse(boxes=boxes)

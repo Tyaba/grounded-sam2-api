@@ -101,8 +101,8 @@ steps:
     script: |
       #!/usr/bin/env bash
       set -eu
-      chmod +x tests/bin/request_api.sh
-      ./tests/bin/request_api.sh
+      chmod +x tests/bin/request_cloudrun_api.sh
+      ./tests/bin/request_cloudrun_api.sh
 
 options:
   machineType: "E2_HIGHCPU_32"
