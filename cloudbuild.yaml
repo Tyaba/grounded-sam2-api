@@ -2,22 +2,22 @@ steps:
   - id: "download-sam2"
     name: "ubuntu"
     waitFor: ["-"]
+    env:
+      - "GCS_SAM2_MODEL_PATH=$_GCS_SAM2_MODEL_PATH"
     script: |
       #!/usr/bin/env bash
       set -eu
-      apt-get update && apt-get install -y wget
-      cd checkpoints
-      bash download_ckpts.sh
+      gcloud storage cp "$GCS_SAM2_MODEL_PATH" ./checkpoints/
 
   - id: "download-gdino"
     name: "ubuntu"
     waitFor: ["-"]
+    env:
+      - "GCS_GDINO_MODEL_PATH=$_GCS_GDINO_MODEL_PATH"
     script: |
       #!/usr/bin/env bash
       set -eu
-      apt-get update && apt-get install -y wget
-      cd gdino_checkpoints
-      bash download_ckpts.sh
+      gcloud storage cp "$GCS_GDINO_MODEL_PATH" ./gdino_checkpoints/
 
   - id: "docker-pull"
     name: "gcr.io/cloud-builders/docker"
@@ -92,6 +92,17 @@ steps:
         --no-cpu-throttling \
         --region=us-central1 \
         --project=$PROJECT_ID
+  - id: "test-api"
+    name: "gcr.io/cloud-builders/gcloud"
+    waitFor: ["deploy-api"]
+    env:
+      - "SERVICE_NAME=$_SERVICE_NAME"
+      - "GOOGLE_CLOUD_PROJECT=$PROJECT_ID"
+    script: |
+      #!/usr/bin/env bash
+      set -eu
+      chmod +x tests/bin/request_api.sh
+      ./tests/bin/request_api.sh
 
 options:
   machineType: "E2_HIGHCPU_32"

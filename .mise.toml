@@ -10,13 +10,11 @@ run = "echo $IMAGE_URI"
 
 [tasks.download-sam2]
 run = """
-cd checkpoints
-bash download_ckpts.sh
+gcloud storage cp "$GCS_SAM2_MODEL_PATH" ./checkpoints/
 """
 [tasks.download-grounding-dino]
 run = """
-cd gdino_checkpoints
-bash download_ckpts.sh
+gcloud storage cp "$GCS_GDINO_MODEL_PATH" ./gdino_checkpoints/
 """
 [tasks.download-models]
 depends = ["download-sam2", "download-grounding-dino"]
