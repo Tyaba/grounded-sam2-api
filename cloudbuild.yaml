@@ -1,6 +1,6 @@
 steps:
   - id: "download-sam2"
-    name: "ubuntu"
+    name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
     waitFor: ["-"]
     env:
       - "GCS_SAM2_MODEL_PATH=$_GCS_SAM2_MODEL_PATH"
@@ -10,7 +10,7 @@ steps:
       gcloud storage cp "$GCS_SAM2_MODEL_PATH" ./checkpoints/
 
   - id: "download-gdino"
-    name: "ubuntu"
+    name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
     waitFor: ["-"]
     env:
       - "GCS_GDINO_MODEL_PATH=$_GCS_GDINO_MODEL_PATH"
